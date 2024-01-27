@@ -1,0 +1,18 @@
+body {
+    background-color: #1a3b5d; /* dark blued steel color */
+    font-family: 'Roboto', sans-serif; /* modern text font */
+    color: #ffffff; /* white color for the text */
+}
+
+html, body {
+    height: 100%;
+    margin: 0; /* Remove any default margin or padding */
+    padding: 0;
+  }
+
+.Pomodoro{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}

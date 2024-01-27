@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>My Web Page</title>
+</head>
+<body>
+    <div class = "Pomodoro">
+        <div>Hello World</div>
+    </div>
+</body>
+</html>
+
+<script>
+
+    const Pomodoro = document.querySelector('.Pomodoro');
+
+    function setTimerElement(element, time) {
+        element.innerHTML = time;
+        let timeLeft = time;
+        console.log(timeLeft);
+        setTimeout(() => setTimerElement(element, timeLeft -1 ), 1000)
+    }
+
+    async function alertSound(){
+        var audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+        audio.play();    
+    }
+
+    Pomodoro.addEventListener('click', () => {
+        Pomodoro.classList.toggle('active');
+        setTimerElement(Pomodoro, 25);
+    });
+
+    window.onload = function() {
+        Pomodoro.innerHTML = "Click to start";
+    }
+    
+</script>
