@@ -15,28 +15,75 @@
 </html>
 
 <script>
+    // Pomodoro Timer
+    //  TODO
+    // - Add a reset button
+    // - Add a pause button
+    // - Loop alarm until acknowledged
+    // - Add a break timer
+    // - Add a long break timer
+    // - Add a counter for completed pomodoros
+    // - Add a counter for completed breaks
+    // - Add a counter for completed long breaks
+    // - Add a counter for total time worked
+    // - Add a counter for total time on break
+    // - Add options to turn features on and off
+    
+    class PomodoroTimer {
+        constructor(elementClass, time = 25, running = false) {
+            this.element = document.querySelector(elementClass);
+            this.element.addEventListener('click', () => this.start());
+            this.time = time;
+            this.resetTime = time;
+            this.running = running;
+            this.element.innerHTML = "Click to start";
+            this.intervalID = null;
+        }
 
-    const Pomodoro = document.querySelector('.Pomodoro');
+        reset(time = this.resetTime) {
+            this.time = time;
+            this.running = true;
+            clearInterval(this.intervalID);
+            this.intervalID = null;
+        }
 
-    function setTimerElement(element, time) {
-        element.innerHTML = time;
-        let timeLeft = time;
-        console.log(timeLeft);
-        setTimeout(() => setTimerElement(element, timeLeft -1 ), 1000)
+        start() {
+            if (this.intervalID != null){
+                //console.log("You Already CLicked!!!!")
+                return;
+            }
+            this.running = true;
+            this.intervalID = setInterval(() => this.tick(), 500);
+        }
+
+        stop() {
+            this.running = false;
+            this.time = 0;
+        }
+
+        tick() {
+            if (this.running == false){
+                return;
+            }
+            if (this.time <= 0){
+                this.running = false;
+                this.alarm();;
+                this.element.innerHTML = "Click to start";
+                this.reset();
+                return;
+            }
+
+            this.time -= 1;
+            this.element.innerHTML = this.time;
+        }
+
+        alarm(){
+            var audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+            audio.play();
+        }
     }
 
-    async function alertSound(){
-        var audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-        audio.play();    
-    }
-
-    Pomodoro.addEventListener('click', () => {
-        Pomodoro.classList.toggle('active');
-        setTimerElement(Pomodoro, 25);
-    });
-
-    window.onload = function() {
-        Pomodoro.innerHTML = "Click to start";
-    }
+    const pomodoro = new PomodoroTimer('.Pomodoro');
+    let running = false;
     
 </script>
