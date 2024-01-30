@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class = "Pomodoro">
-        <div>Hello World</div>
+        <div></div>
     </div>
 </body>
 </html>
@@ -17,8 +17,6 @@
 <script>
     // Pomodoro Timer
     //  TODO
-    // - Add a reset button
-    // - Add a pause button
     // - Loop alarm until acknowledged
     // - Add a break timer
     // - Add a long break timer
@@ -28,24 +26,58 @@
     // - Add a counter for total time worked
     // - Add a counter for total time on break
     // - Add options to turn features on and off
+    // - Add options to change the time for each timer
     
     class PomodoroTimer {
         constructor(elementClass, time = 25, running = false) {
             this.element = document.querySelector(elementClass);
-            this.element.addEventListener('click', () => this.start());
+            
+            [this.timerElement, 
+            this.startBtnElement, 
+            this.resetBtnElement,
+            this.pauseBtnElement ] = this.initElements(this.element);
+            
+            this.startBtnElement.addEventListener('click', () => this.start());
+            this.pauseBtnElement.addEventListener('click', () => this.pause());
+            this.resetBtnElement.addEventListener('click', () => this.reset());
             this.time = time;
+            
             this.resetTime = time;
+            
             this.running = running;
-            this.element.innerHTML = "Click to start";
+            
             this.intervalID = null;
+            
+            this.interval = 1000 * 60;
+            }
+
+        initElements(element){
+            let timer = document.createElement('div');
+            let startBtn = document.createElement('button');
+            let resetBtn = document.createElement('button');
+            let pauseBtn = document.createElement('button');
+
+            timer.innerHTML = "Click to start";
+            startBtn.innerHTML = "Start";
+            resetBtn.innerHTML = "Reset";
+            pauseBtn.innerHTML = "Pause";
+
+            element.appendChild(timer);
+            element.appendChild(startBtn);
+            element.appendChild(resetBtn);
+            element.appendChild(pauseBtn);
+
+            return [timer, startBtn, resetBtn, pauseBtn];
         }
 
         reset(time = this.resetTime) {
             this.time = time;
             this.running = true;
+            this.timerElement.innerHTML = "Click to start";
             clearInterval(this.intervalID);
             this.intervalID = null;
         }
+
 
         start() {
             if (this.intervalID != null){
@@ -53,12 +85,19 @@
                 return;
             }
             this.running = true;
-            this.intervalID = setInterval(() => this.tick(), 500);
+            this.timerElement.innerHTML = this.time;
+            this.intervalID = setInterval(() => this.tick(), this.interval);
         }
 
-        stop() {
-            this.running = false;
-            this.time = 0;
+        pause() {
+            if(this.running == false){
+                this.running = true;
+                this.pauseBtnElement.innerHTML = "Pause";
+            }       
+            else{
+                this.running = false;
+                this.pauseBtnElement.innerHTML = "Resume";
+            }
         }
 
         tick() {
@@ -67,19 +106,20 @@
             }
             if (this.time <= 0){
                 this.running = false;
-                this.alarm();;
-                this.element.innerHTML = "Click to start";
+                this.alarm();
+                this.timerElement.innerHTML = "Click to start";
                 this.reset();
                 return;
             }
 
             this.time -= 1;
-            this.element.innerHTML = this.time;
+            this.timerElement.innerHTML = this.time;
         }
 
         alarm(){
             var audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
             audio.play();
+            audio.loop = true;
         }
     }
 
