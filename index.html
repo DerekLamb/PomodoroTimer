@@ -18,8 +18,6 @@
     // Pomodoro Timer
     //  TODO
     // - Loop alarm until acknowledged
-    // - Add a break timer
-    // - Add a long break timer
     // - Add a counter for completed pomodoros
     // - Add a counter for completed breaks
     // - Add a counter for completed long breaks
@@ -29,26 +27,32 @@
     // - Add options to change the time for each timer
     
     class PomodoroTimer {
-        constructor(elementClass, time = 25, running = false) {
+        constructor(elementClass, time = 25, breakTime = 5, longBreakTime = 15, countUntilLongBreak = 4, running = false) {
             this.element = document.querySelector(elementClass);
-            
+            this.audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
             [this.timerElement, 
             this.startBtnElement, 
             this.resetBtnElement,
-            this.pauseBtnElement ] = this.initElements(this.element);
+            this.pauseBtnElement ] = this.initElements(this.element); // timer, start, reset, pause button elements
             
             this.startBtnElement.addEventListener('click', () => this.start());
             this.pauseBtnElement.addEventListener('click', () => this.pause());
             this.resetBtnElement.addEventListener('click', () => this.reset());
             this.time = time;
             
-            this.resetTime = time;
+            this.resetTime = time; 
             
+            this.breakTime = breakTime; // for break time
+            this.longBreakTime = longBreakTime; // for long break time
+            this.breakNext = true; // for break time
+
+            this.countUntilLongBreak = countUntilLongBreak; // for long breaks
+            this.counter = 0; // for completed pomodoros
             this.running = running;
             
             this.intervalID = null;
             
-            this.interval = 1000 * 60;
+            this.interval = 1000*60;
             }
 
         initElements(element){
@@ -73,9 +77,10 @@
         reset(time = this.resetTime) {
             this.time = time;
             this.running = true;
-            this.timerElement.innerHTML = "Click to start";
+            //this.timerElement.innerHTML = "Click to start";
             clearInterval(this.intervalID);
             this.intervalID = null;
+            this.timerElement.innerHTML = this.time;
         }
 
 
@@ -86,6 +91,7 @@
             }
             this.running = true;
             this.timerElement.innerHTML = this.time;
+            
             this.intervalID = setInterval(() => this.tick(), this.interval);
         }
 
@@ -107,8 +113,14 @@
             if (this.time <= 0){
                 this.running = false;
                 this.alarm();
-                this.timerElement.innerHTML = "Click to start";
-                this.reset();
+
+                if(this.breakNext == true){
+                    this.break();
+                }
+                else{
+                    this.breakNext = true;
+                    this.reset();
+                }
                 return;
             }
 
@@ -117,9 +129,21 @@
         }
 
         alarm(){
-            var audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-            audio.play();
-            audio.loop = true;
+            this.audio.play();
+        }          
+
+        break(){
+            this.breakNext = false;
+            console.log(this.breakNext);
+            if(this.counter > this.countUntilLongBreak){  
+                this.counter = 0;
+                this.reset(this.longBreakTime)
+            }
+            else{
+                this.counter++;
+                this.reset(this.breakTime);
+            }
+            
         }
     }
 
