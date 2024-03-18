@@ -8,7 +8,7 @@
     <title>My Web Page</title>
 </head>
 <body>
-    <div class = "Pomodoro">
+    <div class = "Pomodoro" style="">
         <div></div>
     </div>
 </body>
@@ -30,7 +30,8 @@
         constructor(elementClass, time = 25, breakTime = 5, longBreakTime = 15, countUntilLongBreak = 4, running = false) {
             this.element = document.querySelector(elementClass);
             this.audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-            [this.timerElement, 
+            
+            [ this.timerElement, 
             this.startBtnElement, 
             this.resetBtnElement,
             this.pauseBtnElement ] = this.initElements(this.element); // timer, start, reset, pause button elements
@@ -38,8 +39,8 @@
             this.startBtnElement.addEventListener('click', () => this.start());
             this.pauseBtnElement.addEventListener('click', () => this.pause());
             this.resetBtnElement.addEventListener('click', () => this.reset());
-            this.time = time;
             
+            this.time = time;
             this.resetTime = time; 
             
             this.breakTime = breakTime; // for break time
@@ -52,11 +53,11 @@
             
             this.intervalID = null;
             
-            this.interval = 1000*60;
+            this.interval = 1000 * 60; // 1 minute | sets interval of javascript timer in miliseconds
             }
 
         initElements(element){
-            let timer = document.createElement('div');
+            let timer = document.createElement('h2');
             let startBtn = document.createElement('button');
             let resetBtn = document.createElement('button');
             let pauseBtn = document.createElement('button');
@@ -65,6 +66,16 @@
             startBtn.innerHTML = "Start";
             resetBtn.innerHTML = "Reset";
             pauseBtn.innerHTML = "Pause";
+
+            timer.style.fontSize = "5em";
+            startBtn.style.fontSize = "2em";
+            resetBtn.style.fontSize = "2em";
+            pauseBtn.style.fontSize = "2em";
+            
+            timer.style.margin = "10px";
+            startBtn.style.margin = "10px";
+            resetBtn.style.margin = "10px";
+            pauseBtn.style.margin = "10px";
 
             element.appendChild(timer);
             element.appendChild(startBtn);
@@ -82,7 +93,6 @@
             this.intervalID = null;
             this.timerElement.innerHTML = this.time;
         }
-
 
         start() {
             if (this.intervalID != null){
