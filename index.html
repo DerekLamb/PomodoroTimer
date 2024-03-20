@@ -8,7 +8,7 @@
     <title>My Web Page</title>
 </head>
 <body>
-    <div class = "Pomodoro" style="">
+    <div class = "Pomodoro" style="display: flex">
         <div></div>
     </div>
 </body>
@@ -27,7 +27,20 @@
     // - Add options to change the time for each timer
     
     class PomodoroTimer {
-        constructor(elementClass, time = 25, breakTime = 5, longBreakTime = 15, countUntilLongBreak = 4, running = false) {
+        constructor(elementClass, options = {}) {  
+            const defaultOptions = {
+            time: 25,
+            breakTime: 5,
+            longBreakTime: 15,
+            countUntilLongBreak: 4,
+            running: false,
+            displaySeconds: false,
+            changeTitle: true
+            };
+
+            const {time, breakTime, longBreakTime, countUntilLongBreak, running, displaySeconds} = {...defaultOptions, ...options};
+
+            this.initTimeProperties(time, breakTime, longBreakTime);
             this.element = document.querySelector(elementClass);
             this.audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
             
@@ -38,13 +51,8 @@
             
             this.startBtnElement.addEventListener('click', () => this.start());
             this.pauseBtnElement.addEventListener('click', () => this.pause());
-            this.resetBtnElement.addEventListener('click', () => this.reset());
-            
-            this.time = time;
-            this.resetTime = time; 
-            
-            this.breakTime = breakTime; // for break time
-            this.longBreakTime = longBreakTime; // for long break time
+            this.resetBtnElement.addEventListener('click', () => this.reset()); 
+
             this.breakNext = true; // for break time
 
             this.countUntilLongBreak = countUntilLongBreak; // for long breaks
@@ -53,8 +61,8 @@
             
             this.intervalID = null;
             
-            this.interval = 1000 * 60; // 1 minute | sets interval of javascript timer in miliseconds
-            }
+
+        }
 
         initElements(element){
             let timer = document.createElement('h2');
@@ -85,6 +93,20 @@
             return [timer, startBtn, resetBtn, pauseBtn];
         }
 
+        initTimeProperties(time, breakTime, longBreakTime, baseUnit = 60){
+            this.time = 25 * baseUnit;
+            this.resetTime = this.time;
+            this.breakTime = 5 * baseUnit;
+            this.longBreakTime = 15 * baseUnit;
+            this.interval = 1000;
+        }
+
+        formatTime(time){
+            let minutes = Math.floor(time / 60);
+            let seconds = time % 60;
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
         reset(time = this.resetTime) {
             this.time = time;
             this.running = true;
@@ -100,8 +122,6 @@
                 return;
             }
             this.running = true;
-            this.timerElement.innerHTML = this.time;
-            
             this.intervalID = setInterval(() => this.tick(), this.interval);
         }
 
@@ -123,7 +143,6 @@
             if (this.time <= 0){
                 this.running = false;
                 this.alarm();
-
                 if(this.breakNext == true){
                     this.break();
                 }
@@ -133,9 +152,9 @@
                 }
                 return;
             }
-
             this.time -= 1;
-            this.timerElement.innerHTML = this.time;
+            this.timerElement.innerHTML = this.formatTime(this.time);
+            document.title = this.formatTime(this.time);
         }
 
         alarm(){
