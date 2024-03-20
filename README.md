@@ -1,2 +1,2 @@
 # PomodoroTimer
- Front End only Javascript element
+ Front End Javascript Pomodoro Timer
