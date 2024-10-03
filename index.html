@@ -113,7 +113,7 @@
             //this.timerElement.innerHTML = "Click to start";
             clearInterval(this.intervalID);
             this.intervalID = null;
-            this.timerElement.innerHTML = this.time;
+            this.timerElement.innerHTML = this.formatTime(this.time);
         }
 
         start() {
